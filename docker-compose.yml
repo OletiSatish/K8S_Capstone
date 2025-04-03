@@ -1,33 +1,18 @@
+version: '3.8'
+
 services:
   nodejs:
     build: .
-    container_name: nodejs_container
-    depends_on:
-      mongodb:
-        condition: service_healthy
     ports:
-      - "8000:8000"
+      - '8000:8000'
+    depends_on:
+      - mongodb
     env_file:
       - .env
-    networks:
-      - mynetwork
 
   mongodb:
     image: mongo:latest
-    container_name: mongodb_container
+    ports:
+      - '27017:27017'
     volumes:
-      - mongodb_data:/data/db
-    networks:
-      - mynetwork
-    healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
-      interval: 20s
-      timeout: 10s
-      retries: 10
-
-volumes:
-  mongodb_data:
-
-networks:
-  mynetwork:
-    driver: bridge
+      - ./data:/data/db
