@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-deployment
+  labels:
+    app: flower_shop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flower_shop
+  template:
+    metadata:
+      labels:
+        app: flower_shop
+    spec:
+      containers:
+        - name: flowershop-container
+          image: satishosk/capstone:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGODB_URI
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          hostPath:
+            path: /mnt/data/
+            type: ""
